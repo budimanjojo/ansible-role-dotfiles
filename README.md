@@ -6,9 +6,10 @@ Role to link dotfiles from repository to machine. You will need a repository con
 Supported OS Families
 ---------------------
 
+- Ubuntu (tested)
 - Arch Linux (tested)
 - Redhat (untested)
-- Other Linux distributions supported by 'package' module should work just fine
+- All the other linux distro should work just fine
 
 Role Variables
 --------------
