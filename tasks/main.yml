@@ -1,25 +1,25 @@
 ---
 - name: Ensure git is installed
-  package:
+  ansible.builtin.package:
     name: "{{ dotfiles_git_package_name }}"
     state: present
 
 - block:
   - name: Ensure dotfiles repository is cloned
-    git:
+    ansible.builtin.git:
       repo: "{{ dotfiles_repo_url }}"
       dest: "{{ dotfiles_repo_local_path }}"
       version: "{{ dotfiles_repo_version }}"
       accept_hostkey: "{{ dotfiles_repo_accept_hostkey | default('yes') | bool }}"
 
   - name: Ensure the needed directories are present
-    file:
+    ansible.builtin.file:
       dest: "{{ dotfiles_home }}/{{ item }}"
       state: directory
     loop: "{{ dotfiles_create_dir }}"
 
   - name: Link dotfiles into home directory
-    file:
+    ansible.builtin.file:
       src: "{{ dotfiles_repo_local_path }}/{{ item }}"
       dest: "{{ dotfiles_home }}/{{ item }}"
       state: link
@@ -27,13 +27,13 @@
     loop: "{{ dotfiles_files }}"
 
   - name: Get to know if the link is file or directory
-    stat:
+    ansible.builtin.stat:
       path: "{{ dotfiles_repo_local_path }}/{{ item }}"
     loop: "{{ dotfiles_files }}"
     register: dotfiles_files_info
 
   - name: Ensure file permissions are correct
-    file:
+    ansible.builtin.file:
       dest: "{{ dotfiles_home }}/{{ item.item }}"
       mode: 0644
     loop: "{{ dotfiles_files_info.results }}"
@@ -42,7 +42,7 @@
     when: item.stat.isreg is defined and item.stat.isreg
 
   - name: Ensure group permissions are correct
-    file:
+    ansible.builtin.file:
       dest: "{{ dotfiles_home }}/{{ item.item }}"
       mode: 0755
     loop: "{{ dotfiles_files_info.results }}"
